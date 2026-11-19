@@ -1,0 +1,49 @@
+
+name: Build QuickTools IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned iOS app
+        run: |
+          xcodebuild \
+            -project QuickTools.xcodeproj \
+            -scheme QuickTools \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/QuickToolsBuild" \
+            CODE_SIGNING_ALLOWED=NO build
+
+      - name: Create IPA
+        run: |
+          mkdir -p Payload
+          cp -R "$RUNNER_TEMP/QuickToolsBuild/Build/Products/Release-iphoneos/QuickTools.app" Payload/
+          test -f Payload/QuickTools.app/QuickTools
+          zip -qry QuickTools-unsigned.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuickTools-IPA
+          path: QuickTools-unsigned.ipa
+          retention-days: 7
