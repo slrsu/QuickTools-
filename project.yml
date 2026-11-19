@@ -10,7 +10,7 @@ targets:
     type: application
     platform: iOS
     sources:
-      - path: QuickTools
+      - path: QuickToolsApp.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.quicktools.app
