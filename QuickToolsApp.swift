@@ -1,3 +1,4 @@
+
 import SwiftUI
 import WebKit
 
@@ -14,17 +15,17 @@ struct QuickToolsApp: App {
 
 struct QuickToolsView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
-        let config = WKWebViewConfiguration()
-        config.defaultWebpagePreferences.allowsContentJavaScript = true
-        let view = WKWebView(frame: .zero, configuration: config)
-        view.isOpaque = false
-        view.backgroundColor = .black
-        view.scrollView.backgroundColor = .black
-        view.scrollView.contentInsetAdjustmentBehavior = .never
-        if let file = Bundle.main.url(forResource: "index", withExtension: "html") {
-            view.loadFileURL(file, allowingReadAccessTo: file.deletingLastPathComponent())
-        }
-        return view
+        let webView = WKWebView(frame: .zero)
+        webView.backgroundColor = .black
+        webView.isOpaque = false
+        webView.scrollView.backgroundColor = .black
+
+        let url = URL(string: "https://quicktoolsofficial.vercel.app")!
+        webView.load(URLRequest(url: url))
+
+        return webView
     }
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+    }
 }
